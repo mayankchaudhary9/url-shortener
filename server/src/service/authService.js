@@ -6,7 +6,7 @@ dotenv.config();
 
 class authService {
   async register({ name, email, password }) {
-    const user = await authDao.findUserBYEmail(email);
+    const user = await authDao.checkByEmail(email);
     if (user) {
       return;
     }
@@ -24,6 +24,27 @@ class authService {
     });
 
     return { new: newUser, token };
+  }
+
+  async login({ email, password }) {
+    const user = await authDao.findUserByEmail(email);
+
+    if (!user) {
+      return { message: "Please Register First" };
+    }
+
+    // const matchPassword = await bcrypt.compare(password, this.password);
+
+    // if (!matchPassword) {
+    //   return { message: "Check Your Credentials" };
+    // }
+
+    const payload = { id: user._id };
+    const token = jsonwebtoken.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "2hr",
+    });
+
+    return { user, token };
   }
 }
 

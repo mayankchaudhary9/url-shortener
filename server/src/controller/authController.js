@@ -32,7 +32,34 @@ class authController {
     }
   }
 
-  async login(req, res) {}
+  async login(req, res) {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({
+          message: "Please provide cridentials",
+          error: true,
+          success: false,
+        });
+      }
+
+      const { user, token } = await authService.login({ email, password });
+
+      res.cookie("accessToken", token);
+      return res.status(200).json({
+        message: "Login successful",
+        error: false,
+        success: true,
+        data: user,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message || error,
+        error: true,
+        success: false,
+      });
+    }
+  }
 }
 
 export default new authController();
