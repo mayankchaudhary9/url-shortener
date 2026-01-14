@@ -1,4 +1,5 @@
-import authService from "../service/authService.js";
+import { cookieOptions } from "../config/config.js";
+import authService from "../service/auth.service.js";
 
 class authController {
   async register(req, res) {
@@ -17,7 +18,7 @@ class authController {
         password,
       });
       req.user = user;
-      res.cookie("accessToken", token);
+      res.cookie("accessToken", token, cookieOptions);
       return res.status(201).json({
         message: "Register Successful",
         error: false,
@@ -45,12 +46,12 @@ class authController {
 
       const { user, token } = await authService.login({ email, password });
 
-      res.cookie("accessToken", token);
+      req.user = user;
+      res.cookie("accessToken", token, cookieOptions);
       return res.status(200).json({
         message: "Login successful",
         error: false,
         success: true,
-        data: user,
       });
     } catch (error) {
       return res.status(500).json({

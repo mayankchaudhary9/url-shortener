@@ -1,8 +1,12 @@
-import User from "../models/authModels.js";
+import User from "../models/auth.model.js";
 
 class authDao {
-  async checkByEmail(email) {
-    return await User.findOne({ email });
+  async findUserByEmailByPassword(email) {
+    return await User.findOne({ email }).select("+password");
+  }
+
+  async findUserById(id) {
+    return await User.findById(id);
   }
 
   async createNewUser({ name, email, password }) {
